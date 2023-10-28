@@ -7,10 +7,10 @@ import Profile from "./pages/Profile";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthContextProvider } from "./authcontext/authcontext.jsx";
 
-import { useContext } from "react";
-import AuthContext from "./authcontext/authcontext";
+// import { useContext } from "react";
+// import AuthContext from "./authcontext/authcontext";
 function App() {
-  const authCtx = useContext(AuthContext);
+  // const authCtx = useContext(AuthContext);
 
   return (
     <>

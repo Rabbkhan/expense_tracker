@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import AuthContext from "../authcontext/authcontext";
-
 const Profile = () => {
     const authCtx = useContext(AuthContext);
     const [name, setName] = useState('');
@@ -24,7 +23,7 @@ const Profile = () => {
                 idToken: authCtx.token
             };
 
-            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDX43zQVaf3t-Hb9Gqap_JUSumjpZmNPcM', {
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ', {
                 method: "POST",
                 body: JSON.stringify(requestBody),
                 headers: {
@@ -34,6 +33,7 @@ const Profile = () => {
 
             if (response.ok) {
                 setSuccessMessage("Profile updated successfully");
+                alert(profileImage)
                 setError(null);
             } else {
                 const data = await response.json();
@@ -86,7 +86,9 @@ const Profile = () => {
                 </form>
                 {error && <p className="text-red-500">{error}</p>}
                 {successMessage && <p className="text-green-500 text-center text-lg">{successMessage}</p>}
+
             </div>
+          
         </>
     );
 };

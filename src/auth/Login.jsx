@@ -20,7 +20,7 @@ const Login = () => {
 
       setLoading(true)
 
-       fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDX43zQVaf3t-Hb9Gqap_JUSumjpZmNPcM',{
+       fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ',{
           method:'POST',
           body:JSON.stringify({
             email:enteredEmail,
