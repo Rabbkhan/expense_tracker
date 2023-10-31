@@ -4,8 +4,10 @@ const Expense = () => {
 <>
 <h1 className="text-center">Expense Adding</h1>
     <form className="flex justify-center my-2">
-      <input className="border-2 border-slate-950 px-2 mr-2" type="text" placeholder="Enter money"/>
-      <input className="border-2 border-slate-950 px-2 mr-2" type="text" placeholder="Description"/>
+      <input className="border-2 border-slate-950 px-2 mr-2" 
+      type="text" placeholder="Enter money"/>
+      <input className="border-2 border-slate-950 px-2 mr-2" type="text"
+       placeholder="Description"/>
       <select className="border-2 border-slate-950 px-2 mr-2">
         <option>Food</option>
         <option>Petrol</option>
