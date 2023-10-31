@@ -5,6 +5,8 @@ const Home = () => {
     <>
     <div>Welcome to Expense Tracker</div>
     <h1>Your Profile is Incomplete. <Link to="/profile">Complete  now</Link> </h1>
+
+    
     </>
   )
 }

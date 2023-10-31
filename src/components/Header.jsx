@@ -18,8 +18,8 @@ const Header = () => {
         <div className=''>
             <ul className='lg:flex hidden justify-center text-center lg:my-6   '>
                 <li className='font-semibold mx-3'><Link to='/'>Home</Link> </li>
-                <li className='font-semibold mx-3'><Link to='#'>Products</Link></li>
-                <li className='font-semibold mx-3'><Link to='/about'>About us </Link></li>
+                <li className='font-semibold mx-3'><Link to='/profile'>Profile</Link></li>
+                <li className='font-semibold mx-3'><Link to='/expense'>Add Expense</Link></li>
              {authCtx.isLoggedIn &&   <li className='font-semibold mx-3'>{Key}</li>}
                 {authCtx.isLoggedIn ? (
             <li

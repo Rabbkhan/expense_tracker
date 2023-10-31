@@ -90,7 +90,7 @@ const Login = () => {
               placeholder="Enter the Password"
             />
             <span>
-              <p>Forgot Passowrd?</p>
+              <p> <Link to='resetpassword' className="text-red-500" >Forgot Password?</Link></p>
             </span>
           </div>
 
@@ -101,7 +101,7 @@ const Login = () => {
           </div>
           <div className=" p-2  lg:mx-20 ">
             <p>
-              Have an Acount ?<Link to="/Signup">&nbsp; SignUp</Link>
+              Dont Have an Acount ?<Link to="/Signup" className="text-blue-500">&nbsp; SignUp</Link>
             </p>
           </div>
         </form>

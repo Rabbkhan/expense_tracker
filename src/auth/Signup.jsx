@@ -103,12 +103,12 @@ const SignUp = () => {
               className="bg-red-500 text-slate-50 px-5 py-2 rounded-md"
               disabled={loading}
             >
-              {loading ? "Signing In..." : "Sign Up"}
+              {loading ? "Signin In..." : "Sign Up"}
             </button>
           </div>
           <div className=" p-2  lg:mx-20 ">
             <p>
-              Have an Acount ?<Link to="/login">&nbsp; Login</Link>
+              Have an Acount ?<Link to="/login" className="text-blue-500">&nbsp; Login</Link>
             </p>
           </div>
         </form>
