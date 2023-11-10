@@ -15,7 +15,10 @@ const Expense = () => {
       if (response.ok) {
         const data = await response.json();
         if (data) {
-          const expenseArray = Object.values(data);
+          const expenseArray = Object.entries(data).map(([id, expense]) => ({
+            id,
+            ...expense,
+          }));
           setExpense(expenseArray);
         }
       } else {
@@ -39,57 +42,99 @@ const Expense = () => {
     };
 
     if (editExpense) {
-      // If editExpense is present, update the existing expense
-      const updatedExpenseArray = expense.map((exp) =>
-        exp === editExpense ? newExpense : exp
-        
+      // If editExpense is present, update the existing expense on the server
+      try {
+        const res = await fetch(
+          `https://expensetracker-d8a79-default-rtdb.firebaseio.com/userid/${editExpense.id}.json`,
+          {
+            method: "PUT",
+            body: JSON.stringify(newExpense),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
-        setExpense(updatedExpenseArray);
-        alert("Successfully Updated");
-      setEditExpense(null); // Reset editExpense after updating
+
+        if (res.ok) {
+          alert("Successfully updated");
+        } else {
+          console.error("Failed to update data");
+        }
+      } catch (error) {
+        console.error("Error while updating data:", error);
+      }
+
+      // Reset editExpense after updating
+      setEditExpense(null);
     } else {
-      // If editExpense is not present, add a new expense
-      setExpense([...expense, newExpense]);
+      // If editExpense is not present, add a new expense on the server
+      try {
+        const res = await fetch(
+          "https://expensetracker-d8a79-default-rtdb.firebaseio.com/userid.json",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              amount,
+              description,
+              addrtype: newExpense.addrtype,
+              returnSecureToken: true,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (res.ok) {
+          alert("Successfully added");
+        } else {
+          console.error("Failed to add data");
+        }
+      } catch (error) {
+        console.error("Error while adding data:", error);
+      }
     }
 
     // Clear the input fields
     setAmount("");
     setDescription("");
     setAddrtype("");
+
+    // Fetch the latest data from the server after submitting
+    fetchExpenseData();
   };
 
   const handleEdit = (selectedExpense) => {
-    // Set the selected expense for editing
     setEditExpense(selectedExpense);
-
-    // Populate the input fields with the selected expense data
     setAmount(selectedExpense.amount);
     setDescription(selectedExpense.description);
     setAddrtype(selectedExpense.addrtype);
   };
 
   const HandleDelete = async (selectedExpense) => {
-    const res = await fetch(
-      "https://expensetracker-d8a79-default-rtdb.firebaseio.com/userid.json",
-      {
-        method: "DELETE",
-        body: JSON.stringify({
-          amount: selectedExpense.amount,
-          description: selectedExpense.description,
-          addrtype: selectedExpense.addrtype,
-          returnSecureToken: true,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (res.ok) {
-      alert("Successfully Deleted");
+    try {
+      const res = await fetch(
+        `https://expensetracker-d8a79-default-rtdb.firebaseio.com/userid/${selectedExpense.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      window.location.reload();
+      if (res.ok) {
+        alert("Successfully Deleted");
+        // Fetch the latest data from the server after deleting
+        fetchExpenseData();
+      } else {
+        console.error("Failed to delete data");
+      }
+    } catch (error) {
+      console.error("Error while deleting data:", error);
     }
   };
+
 
   return (
     <>
