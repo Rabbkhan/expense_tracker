@@ -1,50 +1,79 @@
 import { useContext } from 'react';
-import Logo from '../assets/expense_tracker.png'
-import { Link, useNavigate } from "react-router-dom";
+import Logo from '../assets/expense_tracker.png';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../authcontext/authcontext';
-// import Profile from '../pages/Profile';
 
 const Header = () => {
-  const navigator =useNavigate
-  const authCtx = useContext(AuthContext)
-  const logoutHandler = ()=>{
+  const navigator = useNavigate();
+  const authCtx = useContext(AuthContext);
+
+  const logoutHandler = () => {
     authCtx.logout();
-    navigator('/login')
-  }
-  const Key = localStorage.getItem('email')
+    navigator('/login');
+  };
+
+  const Key = localStorage.getItem('email');
+
   return (
-    <div className="bg-white-700 flex justify-between px-20">
-        <div className='my-1'> <Link to='/'><img src={Logo} width={70} alt=""/> </Link></div>
-        <div className=''>
-            <ul className='lg:flex hidden justify-center text-center lg:my-6   '>
-                <li className='font-semibold mx-3'><Link to='/'>Home</Link> </li>
-                <li className='font-semibold mx-3'><Link to='/profile'>Profile</Link></li>
-                <li className='font-semibold mx-3'><Link to='/expense'>Add Expense</Link></li>
-             {authCtx.isLoggedIn &&   <li className='font-semibold mx-3'>{Key}</li>}
-                {authCtx.isLoggedIn ? (
-            <li
-            className='font-semibold mx-3'
-            
-              onClick={logoutHandler}
-            >
-              {" "}
-              <Link to="/login" >logout </Link>
-            </li>
-          ) : (
-            <li className='font-semibold mx-3'>
-              <Link to={"/login"}>Signin</Link>
+    <div className=" flex justify-between p-4">
+      <div className="my-1">
+        <Link to="/">
+          <img src={Logo} width={90} alt="Expense Tracker" />
+        </Link>
+      </div>
+      <div>
+        <ul className="lg:flex hidden justify-center text-center lg:my-2 space-x-4">
+          {authCtx.isLoggedIn && (
+            <li className="font-semibold">
+              <Link to="/" className="text-pink-700 hover:underline transition-colors duration-300">
+                Home
+              </Link>
             </li>
           )}
-          <ul>
-            <li className='border-2 border-red-500 rounded-3xl w-12 h-12 -my-2'><img className='rounded-full w-14 h-11' src='https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?size=626&ext=jpg&ga=GA1.1.386372595.1698278400&semt=ais' alt='profile'></img></li>
-          </ul>
+          {authCtx.isLoggedIn && (
+            <li className="font-semibold">
+              <Link to="/about" className="text-pink-700 hover:underline transition-colors duration-300">
+                About
+              </Link>
+            </li>
+          )}
+          {authCtx.isLoggedIn && (
+            <li className="font-semibold">
+              <Link to="/profile" className="text-pink-700 hover:underline transition-colors duration-300">
+                Profile
+              </Link>
+            </li>
+          )}
+          {authCtx.isLoggedIn && (
+            <li className="font-semibold">
+              <Link to="/expense" className="text-pink-700 hover:underline transition-colors duration-300">
+                Add Expense
+              </Link>
+            </li>
+          )}
+          {authCtx.isLoggedIn && (
+            <li className="font-semibold text-pink-700">
+              {Key}
+            </li>
+          )}
+          {authCtx.isLoggedIn ? (
+            <li className="font-semibold cursor-pointer">
+              <span
+                className="text-pink-700 hover:underline transition-colors duration-300"
+                onClick={logoutHandler}
+              >
+                Logout
+              </span>
+            </li>
+          ) : (
+            <li className="font-semibold text-pink-700 hover:underline transition-colors duration-300">
+              <Link to="/login">Sign In</Link>
+            </li>
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+};
 
-                
-            </ul>
-        </div>
-        
-           </div>
-  )
-}
-
-export default Header
+export default Header;

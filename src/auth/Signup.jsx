@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import Bgpattern from "../assets/bg-pattern.png";
 import { useState } from "react";
 
 const SignUp = () => {
@@ -17,7 +16,7 @@ const SignUp = () => {
 
     try {
       const res = await fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ",
+        "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ",
         {
           method: "POST",
           body: JSON.stringify({
@@ -48,73 +47,73 @@ const SignUp = () => {
   };
 
   return (
-    <div className="text-slate-950 py-16 flex justify-around">
-      <div>
-        <img
-          className="h-96 w-96 justify-center lg:mx-44"
-          src={Bgpattern}
-          alt=""
-        />
-      </div>
-      <div>
-        <h1 className="lg:mx-96 max-w-full absolute top-44  left-36 font-extrabold text-3xl text-s text-center max-h-screen border-b-4  border-red-400 text-red-400 ">
-          Sign Up
-        </h1>
-        <form
-          onSubmit={submitHandler}
-          className="lg:mx-96 max-w-full absolute top-48 left-36 font-extrabold text-center my-9 max-h-screen"
-        >
-          {error && <p className="text-red-500">{error}</p>}
-          <div className="my-5">
-            <label className="text-slate-50  float-left">Email &nbsp;</label>
-            <input
-              className="p-2 border border-indigo-600"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter Your Mail"
-            />
-          </div>
-          <div className="my-5">
-            <label className="text-slate-50 float-left">Password &nbsp;</label>
-            <input
-              className="p-2 border border-indigo-600"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter the Password"
-            />
-          </div>
-          <div>
-            <label className=" text-slate-50 float-left">
-              Confirm Password &nbsp;
+    <div className="flex justify-center items-center h-auto ">
+      <div className="bg-white w-full md:w-96 p-8 rounded-lg shadow-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-pink-600">Sign Up</h1>
+        </div>
+        <form onSubmit={submitHandler}>
+          {error && <p className="text-pink-600 mb-4 text-center">{error}</p>}
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-gray-600 mb-2">
+              Email
             </label>
             <input
-              className="p-2 border border-indigo-600"
-              type="password"
-              value={confirmpassowrd}
-              onChange={(e) => setConfirmpassword(e.target.value)}
-              placeholder="Re-Enter the Password"
+              id="email"
+              type="email"
+              className="w-full px-3 py-2 border border-pink-600 rounded-md"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter Your Email"
             />
           </div>
-
-          <div className="my-5 ml-7">
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-gray-600 mb-2">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              className="w-full px-3 py-2 border border-pink-600 rounded-md"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter Your Password"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="confirmPassword" className="block text-gray-600 mb-2">
+              Confirm Password
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              className="w-full px-3 py-2 border border-pink-600 rounded-md"
+              value={confirmpassowrd}
+              onChange={(e) => setConfirmpassword(e.target.value)}
+              placeholder="Re-Enter Your Password"
+            />
+          </div>
+          <div className="mb-4 text-center">
             <button
-              className="bg-red-500 text-slate-50 px-5 py-2 rounded-md"
+              className="bg-pink-800 text-white px-4 py-2 rounded-md w-full"
               disabled={loading}
             >
-              {loading ? "Signin In..." : "Sign Up"}
+              {loading ? "Signing In..." : "Sign Up"}
             </button>
           </div>
-          <div className=" p-2  lg:mx-20 ">
+          <div className="text-center">
             <p>
-              Have an Acount ?<Link to="/login" className="text-blue-500">&nbsp; Login</Link>
+              Have an Account?{" "}
+              <Link to="/login" className="text-pink-500">
+                Login
+              </Link>
             </p>
           </div>
         </form>
       </div>
     </div>
   );
+  
 };
 
 export default SignUp;
