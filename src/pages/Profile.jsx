@@ -1,70 +1,83 @@
-import { useContext, useEffect, useState } from "react";
-import AuthContext from "../authcontext/authcontext";
+import { useContext, useEffect, useState } from 'react';
+import AuthContext from '../authcontext/authcontext';
 
 const Profile = () => {
   const authCtx = useContext(AuthContext);
-  const [name, setName] = useState('');
-  const [profileImage, setProfileImage] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('');
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [userData, setUserData] = useState(null); // State to hold fetched user data
 
-  // Use local storage to initialize the form fields when the component mounts
+  // Fetch user data when the component mounts
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('userData'));
-    if (storedData) {
-      setName(storedData.name);
-      setProfileImage(storedData.profileImage);
-    }
-  }, []);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              idToken: authCtx.token,
+              returnSecureToken: true,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Error fetching user data');
+        }
+
+        const data = await response.json();
+        const user = data.users[0];
+        setUserData(user);
+        setDisplayName(user.displayName || ''); // Set display name from fetched data
+        setPhotoUrl(user.photoUrl || ''); // Set photo URL from fetched data
+      } catch (error) {
+        console.error('Error fetching user data', error);
+      }
+    };
+
+    fetchData();
+  }, [authCtx.token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if the user is authenticated
-    if (!authCtx.token) {
-      setError("User is not authenticated. Please log in.");
-      return;
-    }
-
     try {
-      const requestBody = {
-        name,
-        profileImage,
-        // You may need to send your user identifier here depending on your API
-        userId: authCtx.userId,
-        // You should have a suitable API URL for updating the user's profile
-      };
+      const res = await fetch(
+        'https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            idToken: authCtx.token,
+            displayName: displayName,
+            photoUrl: photoUrl,
+            returnSecureToken: true,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-      // Send a POST request to update the profile
-      const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ/userId.json', {
-        method: "GET",
-        body: JSON.stringify(requestBody),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${authCtx.token}`, // Include user token in headers
-        },
-      });
-
-      if (response.ok) {
-        setSuccessMessage("Profile updated successfully");
-        setError(null);
-
-        // Save the updated data in local storage
-        const updatedData = {
-          name,
-          profileImage,
-        };
-        localStorage.setItem('userData', JSON.stringify(updatedData));
+      if (res.ok) {
+        // Successful update, you can handle the response here
+        alert('Update success');
+        setSuccessMessage('Update successful');
       } else {
-        const data = await response.json();
+        // Handle update error
+        const data = await res.json();
         setError(data.error.message);
-        setSuccessMessage(null);
       }
     } catch (error) {
-      setError("An error occurred while updating the profile.");
-      setSuccessMessage(null);
+      // Handle network or other errors
+      setError('An error occurred while trying to update.');
     }
-  }
+  };
 
   return (
     <>
@@ -78,8 +91,8 @@ const Profile = () => {
             <input
               className="border-2 w-80 h-10 px-2"
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Enter Full Name"
             />
           </div>
@@ -87,8 +100,8 @@ const Profile = () => {
             <label htmlFor="profilephoto">Profile Photo URL &nbsp; &nbsp;</label>
             <input
               className="border-2 w-80 h-10 mx-2 px-2"
-              value={profileImage}
-              onChange={(e) => setProfileImage(e.target.value)}
+              value={photoUrl}
+              onChange={(e) => setPhotoUrl(e.target.value)}
               type="text"
               placeholder="Enter Image URL"
             />
@@ -99,13 +112,13 @@ const Profile = () => {
             </button>
           </div>
           <div>
-            <button className="border-2 border-red-400 px-5 py-2">
-              Cancel
-            </button>
+            <button className="border-2 border-red-400 px-5 py-2">Cancel</button>
           </div>
         </form>
         {error && <p className="text-red-500">{error}</p>}
-        {successMessage && <p className="text-green-500 text-center text-lg">{successMessage}</p>}
+        {successMessage && (
+          <p className="text-green-500 text-center text-lg">{successMessage}</p>
+        )}
       </div>
     </>
   );
