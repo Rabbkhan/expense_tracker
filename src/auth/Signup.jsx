@@ -5,46 +5,50 @@ const SignUp = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmpassowrd, setConfirmpassword] = useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
+    
     try {
-      const res = await fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email,
-            password,
-            returnSecureToken: true,
+    if(password == confirmpassword){
+    const res = await fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+          returnSecureToken: true,
           }),
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
+
       if (res.ok) {
-        // Successful login, you can handle the res here
         alert("Signup success");
         navigate("/login");
       } else {
-        // Handle login error
         const data = await res.json();
         setError(data.error.message);
       }
+      }else{
+        alert('Entered Confirm Password Same')
+      }
     } catch (error) {
-      // Handle network or other errors
-      setError("An error occurred while trying to login.");
+    
+      setError("An error occurred while trying to sign up.");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex justify-center items-center h-auto ">
@@ -88,8 +92,8 @@ const SignUp = () => {
               id="confirmPassword"
               type="password"
               className="w-full px-3 py-2 border border-pink-600 rounded-md"
-              value={confirmpassowrd}
-              onChange={(e) => setConfirmpassword(e.target.value)}
+              value={confirmpassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Re-Enter Your Password"
             />
           </div>

@@ -48,8 +48,7 @@ const Profile = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch(
-        'https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ',
+      const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ',
         {
           method: 'POST',
           body: JSON.stringify({
