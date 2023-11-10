@@ -1,49 +1,60 @@
-import { useContext, useRef } from "react";
-import AuthContext from "../authcontext/authcontext";
-import { useNavigate } from "react-router-dom";
-
+import { useState } from "react";
 const ForgotePassoword = () => {
-  const newPasswordInputRef = useRef();
-  const Navigate = useNavigate();
-  const authCtx = useContext(AuthContext);
-  const submitHandler = (e) => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const ForgotePassowordHandler = async (e) => {
     e.preventDefault();
-    const enteredNewPassword = newPasswordInputRef.current.value;
-    fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ",
-      {
-        method: "POST",
+    setLoading(true);
+
+    try {
+      const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBOHmI4S1eeBK4wrP1WlGvI-JosSRP8YCQ', {
+        method: 'POST',
         body: JSON.stringify({
-          idToken: authCtx.token,
-          password: enteredNewPassword,
-          returnSecureToken: true,
+          email,
+          requestType: 'PASSWORD_RESET',
         }),
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        throw new Error(data.error.message || 'Failed to send a password reset email');
       }
-    ).then((res) => {
-      if (res.ok) {
-        console.log("Password Update Successfull");
-        Navigate('/login');
-      }
-    });
+  
+      alert('A password reset link has been sent to your email');
+  
+    } catch (error) {
+      console.error('Error sending password reset email:', error.message);
+      // Handle errors, show an error message to the user, or handle it in another way
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
-    <>
-      <div className="text-center text-slate-950 text-xl">Reset Password</div>
-      <form onSubmit={submitHandler} className="flex justify-center my-2">
+    <div className="flex flex-col items-center justify-center h-auto">
+      <div className="text-3xl font-bold text-gray-800 mb-4">Reset Password</div>
+      <form onSubmit={ForgotePassowordHandler} className="flex flex-col items-center">
         <input
-          className="border-2 border-slate-950 px-2 mr-2"
-          type="password"
-          placeholder="Enter New Password"
-          ref={newPasswordInputRef}
+          className="border-2 rounded-md p-2 mb-4 focus:outline-none"
+          type="email"
+          placeholder="Enter Your Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <button className="border-2 border-slate-950 px-2 mr-2 bg-slate-950 text-slate-50 rounded-sm">
-          Update
+        <button
+          type="submit"
+          className={`bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 focus:outline-none ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={loading}
+        >
+          {loading ? 'Updating...' : 'Update'}
         </button>
       </form>
-    </>
+    </div>
   );
 };
 
