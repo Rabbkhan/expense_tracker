@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const Expense = () => {
   const [amount, setAmount] = useState("");
@@ -6,6 +6,9 @@ const Expense = () => {
   const [expense, setExpense] = useState([]);
   const [addrtype, setAddrtype] = useState("");
   const [editExpense, setEditExpense] = useState(null);
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [showPremiumButton, setShowPremiumButton] = useState(false);
+  const [theme, setTheme] = useState("light"); // Theme state
 
   const fetchExpenseData = async () => {
     try {
@@ -20,6 +23,11 @@ const Expense = () => {
             ...expense,
           }));
           setExpense(expenseArray);
+
+          const total = expenseArray.reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
+          setTotalExpenses(total);
+
+          setShowPremiumButton(total > 10000);
         }
       } else {
         console.error("Failed to fetch data");
@@ -42,7 +50,6 @@ const Expense = () => {
     };
 
     if (editExpense) {
-      // If editExpense is present, update the existing expense on the server
       try {
         const res = await fetch(
           `https://expensetracker-d8a79-default-rtdb.firebaseio.com/userid/${editExpense.id}.json`,
@@ -64,10 +71,8 @@ const Expense = () => {
         console.error("Error while updating data:", error);
       }
 
-      // Reset editExpense after updating
       setEditExpense(null);
     } else {
-      // If editExpense is not present, add a new expense on the server
       try {
         const res = await fetch(
           "https://expensetracker-d8a79-default-rtdb.firebaseio.com/userid.json",
@@ -95,12 +100,10 @@ const Expense = () => {
       }
     }
 
-    // Clear the input fields
     setAmount("");
     setDescription("");
     setAddrtype("");
 
-    // Fetch the latest data from the server after submitting
     fetchExpenseData();
   };
 
@@ -125,7 +128,6 @@ const Expense = () => {
 
       if (res.ok) {
         alert("Successfully Deleted");
-        // Fetch the latest data from the server after deleting
         fetchExpenseData();
       } else {
         console.error("Failed to delete data");
@@ -135,12 +137,57 @@ const Expense = () => {
     }
   };
 
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
+  const downloadCSV = () => {
+    const csvData = expense.map((expenses) => {
+      return `${expenses.amount},${expenses.description},${expenses.addrtype}`;
+    });
+  
+    // Add a newline character after the header
+    const csvContent = `Amount,Description,Category\n${csvData.join("\n")}`;
+    
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "expenses.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+  
 
   return (
-    <>
+    <div className={`app ${theme === "dark" ? "dark" : ""}`}>
       <h1 className="text-2xl font-bold text-center text-pink-700 mb-4">
         Expense Adding
       </h1>
+      <div className="flex justify-center mb-4">
+      {showPremiumButton && (
+        <button className="bg-yellow-500 text-white px-3 py-2 rounded-md mr-2">
+          Activate Premium
+        </button>
+      )}
+
+      {/* Toggle Theme Button */}
+      <button
+        className="bg-gray-500 text-white px-3 py-2 rounded-md mr-2"
+        onClick={toggleTheme}
+      >
+        Toggle Theme
+      </button>
+
+      {/* Download Expenses as CSV Button */}
+      <button
+        className="bg-green-500 text-white px-3 py-2 rounded-md"
+        onClick={downloadCSV}
+      >
+        Download Expenses
+      </button>
+    </div>
 
       <form
         className="flex justify-center my-2"
@@ -218,7 +265,9 @@ const Expense = () => {
           </tbody>
         </table>
       </div>
-    </>
+
+      
+    </div>
   );
 };
 
